@@ -12,6 +12,7 @@ def get_latest_block():
         "params": []
     }
     response = requests.post(rpc_url, json=payload)
+    print(response)
     return response.json()['result']['absoluteSlot']
 
 
