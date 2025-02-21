@@ -16,7 +16,7 @@ def get_latest_block():
         "method": "getEpochInfo",
         "params": []
     }
-    response = requests.post(rpc_url, json=payload,proxies=proxies)
+    response = requests.post(rpc_url, json=payload)
     print(response)
     return response.json()['result']['absoluteSlot']
 
@@ -28,7 +28,7 @@ def get_signatures_for_block(slot):
         "method": "getBlock",
         "params": [slot, {"encoding": "json", "maxSupportedTransactionVersion": 0}]
     }
-    response = requests.post(rpc_url, json=payload,proxies=proxies)
+    response = requests.post(rpc_url, json=payload)
 
     if response.status_code == 200:
         return response.json().get('result', [])
