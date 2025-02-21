@@ -18,7 +18,7 @@ proxies = {
 
 # 设置 HTTP 代理
 session = requests.Session()
-session.proxies.update(proxies)
+# session.proxies.update(proxies)
 
 # 创建 Solana 客户端并使用代理
 client = Client("https://sg110.nodes.rpcpool.com")
