@@ -35,7 +35,7 @@ def get_latest_block():
 
         print(f"Latest Block Hash: {latest_blockhash}")
     except Exception as e:
-        print(f"Error fetching block: {e}")
+        print(f"Error fetching block: {e.error_msg}")
 
 
 # 分析交易中的代币操作
