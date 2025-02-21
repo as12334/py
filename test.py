@@ -1,20 +1,49 @@
-from solana.rpc.api import Client
+import requests
+import time
 
-# 连接到 Solana RPC 服务
-rpc_url = "https://api.mainnet-beta.solana.com"
-client = Client(rpc_url)
+rpc_url = "https://sg110.nodes.rpcpool.com"
+
 
 def get_latest_block():
-    # 获取最新区块的 slot
-    response = client.get_epoch_info()
-    if response['result']:
-        latest_slot = response['result']['absoluteSlot']  # 获取当前最新的 slot
-        print(f"当前最新的 Slot: {latest_slot}")
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "getEpochInfo",
+        "params": []
+    }
+    response = requests.post(rpc_url, json=payload)
+    return response.json()['result']['absoluteSlot']
 
-        # 获取区块信息
-        block_info = client.get_block(latest_slot)
-        print(f"区块信息: {block_info}")
-    else:
-        print("获取最新区块信息失败")
 
-get_latest_block()
+def get_signatures_for_block(slot):
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "getConfirmedBlock",
+        "params": [slot]
+    }
+    response = requests.post(rpc_url, json=payload)
+    return response.json().get('result', {}).get('transactions', [])
+
+
+def monitor_new_tokens():
+    last_slot = get_latest_block()
+    print(f"Starting block monitoring at slot: {last_slot}")
+
+    while True:
+        # Get the latest block
+        current_slot = get_latest_block()
+        if current_slot > last_slot:
+            print(f"New block detected at slot {current_slot}")
+            transactions = get_signatures_for_block(current_slot)
+            for txn in transactions:
+                print(f"Transaction: {txn}")
+                # 这里可以添加逻辑来判断是否为代币发行交易
+                # 比如，查看交易是否涉及 mint 或代币创建的指令
+            last_slot = current_slot
+
+        time.sleep(5)  # 每5秒检查一次新区块
+
+
+# 启动监控
+monitor_new_tokens()
